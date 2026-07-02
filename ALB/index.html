@@ -28,7 +28,8 @@
         <p class="text-slate-500 text-sm pb-4">
           이 페이지는 AWS ALB의 부하분산을 통해 <br />
           안정적으로 호스팅되고 있습니다. <br />
-          [HOST NAME: {{HOSTNAME}}]
+          <strong>[HOST NAME: $(hostname)]</strong>
+          <!-- 아마존리눅스: <strong>[HOST NAME: {{HOSTNAME}}]</strong> -->
         </p>
       </div>
 
