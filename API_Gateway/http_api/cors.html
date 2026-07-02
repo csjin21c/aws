@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        async function getLambda() {
+            const resultBox = document.getElementById('result');
+            const API_URL = "https://73d7iovush.execute-api.ap-south-1.amazonaws.com/lab";
+            resultBox.innerHTML = '<span>데이터를 불러오는 중입니다...</span>';
+
+            // fetch(): 지정된 네트워크 경로에서 데이터를 가져옴
+            // await: 비동기 작업이 완료될 때까지 기다림
+            const result = await fetch(API_URL)
+            const data = await result.json(); // 문자열 형식의 응답 Data를 JSON 형식으로 변환
+            resultBox.innerText = JSON.stringify(data, null, 2); // JSON 객체를 문자열로 변환하여 출력, 2는 들여쓰기
+        }
+    </script>
+</head>
+<body>
+    <button onclick="getLambda()">Click Me</button>
+    <div id="result"></div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS API Gateway 실습(with Lambda & CORS)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .button-group { margin-bottom: 20px; }
+        button { 
+            padding: 10px 20px; margin-right: 10px; cursor: pointer;
+            border: none; border-radius: 5px; color: white; font-weight: bold;
+        }
+        #btn-move { background-color: #007bff; }
+        #btn-api { background-color: #28a745; }
+        #result-box { 
+            width: 100%; min-height: 200px; border: 2px solid #ddd;
+            padding: 15px; background-color: #f9f9f9; white-space: pre-wrap;
+            word-wrap: break-word; font-family: monospace; border-radius: 5px;
+        }
+        .loading { color: #888; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <h2>API Gateway & Lambda 연동 테스트</h2>
+
+    <div class="button-group">
+        <button id="btn-move" onclick="moveToS3()">S3 버킷으로 이동</button>
+
+        <button id="btn-move" onclick="moveToUrl()">HTtP API URL 직접 실행</button>
+        
+        <button id="btn-api" onclick="fetchApiData()">데이터 가져오기 (API)</button>
+    </div>
+
+    <h4>결과 출력창</h4>
+    <div id="result-box">버튼을 클릭하면 결과가 여기에 표시됩니다.</div>
+
+    <script>
+        // 1. 이동할 URL 설정
+        const TARGET_S3_URL = "https://xcdnojhecb.execute-api.ap-south-1.amazonaws.com"
+        // 2. 이동할 URL 설정
+        const TARGET_URL = "https://xcdnojhecb.execute-api.ap-south-1.amazonaws.com/db";
+        
+        // 3. API Gateway 엔드포인트 설정 (본인의 주소로 변경하세요)
+        const API_GATEWAY_URL = "https://xcdnojhecb.execute-api.ap-south-1.amazonaws.com/db";
+
+        function moveToUrl() {
+            window.open(TARGET_URL, '_blank');
+        }
+
+        function moveToS3() {
+            window.open(TARGET_S3_URL, '_blank');
+        }
+
+        async function fetchApiData() {
+            const resultBox = document.getElementById('result-box');
+            resultBox.innerHTML = '<span class="loading">데이터를 불러오는 중입니다...</span>';
+
+            try {
+                const response = await fetch(API_GATEWAY_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP 에러 발생! 상태코드: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 데이터를 보기 좋게 JSON 문자열로 변환 (들여쓰기 2칸)
+                resultBox.innerText = JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                resultBox.innerText = "에러 발생: " + error.message + 
+                    "\n\n※ 확인사항: API Gateway의 CORS 설정이 허용되어 있는지 확인하세요.";
+                resultBox.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

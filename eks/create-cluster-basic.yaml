@@ -1,0 +1,49 @@
+# ###################################################################
+# VPC ID / Public Subnet IDs / Private Subnet IDs /  shared security group IDs
+# VPC ID: vpc-0aee0c708f0642fe2
+# ap-south-1a: subnet-0dc5acbf30fcac0bf / subnet-0c319c144ef3eeab7
+# ap-south-1b: subnet-09e373cad9cd9723e / subnet-009e23e32b9504c32
+# ap-south-1c: subnet-03cb8c9f1e439e8b7 / subnet-05d5b569f3ae2947f
+# Security Group IDs: http(sg-0d5e6b530ccf6a114)
+# ###################################################################
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: ian-ex-cluster-basic-v1 # 클러스터 이름을 ian-ex-cluster-basic-v1로 설정
+  region: ap-south-1 # 클러스터가 생성될 AWS 리전을 ap-south-1로 설정 (인도 뭄바이 리전)
+iam:
+  withOIDC: true # OIDC 공급자 활성화하여 클러스터에서 IAM 역할을 서비스 계정에 연결할 수 있도록 설정
+
+vpc:
+  id: "vpc-0aee0c708f0642fe2" # eksctl로 클러스터를 생성할 때 사용할 VPC ID를 지정
+  clusterEndpoints:
+    publicAccess: true # 외부에서 ekaclt/kubectl로 API 서버에 접근 가능하도록 설정
+    privateAccess: true # VPC 내부에서만 API 서버에 접근 가능하도록 설정
+  subnets:
+    public: # eksctl로 생성한 클러스터에서 관리하는 노드 그룹이 사용할 퍼블릭 서브넷을 지정
+      ap-south-1a: { id: "subnet-0dc5acbf30fcac0bf" }
+      ap-south-1b: { id: "subnet-09e373cad9cd9723e" }
+      ap-south-1c: { id: "subnet-03cb8c9f1e439e8b7" }
+    private: # eksctl로 클러스터(워커노드) 구성에 사용할 프라이빗 서브넷을 지정
+      ap-south-1a: { id: "subnet-0c319c144ef3eeab7" }
+      ap-south-1b: { id: "subnet-009e23e32b9504c32" }
+      ap-south-1c: { id: "subnet-05d5b569f3ae2947f" }
+
+managedNodeGroups: # 워커 노드 설정
+  - name: ng-1
+    instanceType: t3.medium
+    desiredCapacity: 2 # 클러스터 생성 시 2개의 노드로 시작하도록 설정
+    minsize: 1 # 노드 그룹의 최소 크기를 1로 설정
+    maxSize: 3 # 노드 그룹의 최대 크기를 3으로 설정
+    privateNetworking: true # 프라이빗 서브넷에 노드 그룹을 생성하도록 설정
+    ssh:
+      allow: true # SSH 액세스 허용
+      publicKeyName: ian-lab-key # SSH 액세스에 사용할 EC2 키
+    securityGroups:
+      attachIDs: ["sg-0d5e6b530ccf6a114"] # 노드 그룹에 연결할 보안 그룹 ID
+    iam:
+      withAddonPolicies:
+        autoScaler: true # Cluster Autoscaler에 필요한 IAM 정책 추가
+        imageBuilder: true # EKS 노드 이미지 빌더(AMI 생성,관리 자동화 서비스)에 필요한 IAM 정책 추가
+        cloudWatch: true # CloudWatch에 필요한 IAM 정책 추가
+        albIngress: true # ALB Ingress Controller에 필요한 IAM 정책 추가

@@ -1,0 +1,63 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ian-ex-cluster-alb-v1
+  region: ap-south-1
+iam:
+  withOIDC: true
+
+# 1. 기존 VPC 연결 (이 경우 eksctl은 NAT를 새로 만들지 않고 기존 라우팅을 따름)
+vpc:
+  id: "vpc-0aee0c708f0642fe2"
+  subnets:
+    public: # [필수] 기존 VPC의 퍼블릭 서브넷 ID를 입력하여 연결
+      ap-south-1a:
+        id: "subnet-0dc5acbf30fcac0bf"
+        tags:
+          kubernetes.io/role/elb: "1" # ELB가 퍼블릭 서브넷을 인식하도록 태그 추가
+      ap-south-1b:
+        id: "subnet-09e373cad9cd9723e"
+        tags:
+          kubernetes.io/role/elb: "1"
+      ap-south-1c:
+        id: "subnet-03cb8c9f1e439e8b7"
+        tags:
+          kubernetes.io/role/elb: "1"
+    private:
+      ap-south-1a:
+        id: "subnet-0c319c144ef3eeab7"
+        tags:
+          kubernetes.io/role/internal-elb: "1" # ELB가 내부 로드밸런서를 구성하기 위한 서브넷 인식 태그
+      ap-south-1b:
+        id: "subnet-009e23e32b9504c32"
+        tags:
+          kubernetes.io/role/internal-elb: "1"
+      ap-south-1c:
+        id: "subnet-05d5b569f3ae2947f"
+        tags:
+          kubernetes.io/role/internal-elb: "1"
+  clusterEndpoints: # 노드들간의 통신 방식 설정
+    publicAccess: true # 외부(인터넷)에서 kubectl명령으로 클러스터 관리
+    privateAccess: true # 워커노드와 마스터 노드 간의 통신을 내부망으로 직통
+
+# 2. 관리형 노드 그룹 설정
+managedNodeGroups:
+  - name: ian-ex-cluster-alb-ng
+    instanceType: t3.medium
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 5
+    volumeSize: 20
+    privateNetworking: true # 프라이빗 서브넷에 노드 배치
+    ssh:
+      allow: true # 배스천 호스트 등을 통한 SSH 접근 허용 시
+      publicKeyName: "ian-lab-key" # 사전에 생성된 EC2 키 페어 이름 입력
+    securityGroups:
+      attachIDs: ["sg-0d5e6b530ccf6a114", "sg-05897caabbfcc5ef2"] # web-sg, fastapi-sg
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        cloudWatch: true
+        albIngress: true

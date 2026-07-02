@@ -1,0 +1,158 @@
+# Deployment: nginx-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: csjin21c/nginx:1.29.7-alpine-v2
+          imagePullPolicy: Always # 항상 최신 이미지 사용 (개발 단계에서는 유용)
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m" # HPA 측정을 위한 필수 설정(nginx, 100m~500m)
+            limits:
+              cpu: "250m" # requests의 2.5배(nginx)
+---
+# 2. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# Deployment: fastapi-jinja-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-jinja-deployment
+  labels:
+    app: fastapi-app
+spec:
+  replicas: 2 # 노드가 3개이므로 가용성을 위해 3으로 설정 (권장)
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+        - name: fastapi-container
+          image: 626635419731.dkr.ecr.ap-south-1.amazonaws.com/ian/fastapi:jinja2-v2
+          imagePullPolicy: Always # 항상 최신 이미지 사용 (개발 단계에서는 유용)
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service # Ingress에서 참조할 서비스 이름
+spec:
+  # ClusterIP: 클러스터 내부 통신용 (ALB Ingress가 이 서비스를 바라봄)
+  type: ClusterIP
+  selector:
+    app: fastapi-app
+  ports:
+    - protocol: TCP
+      port: 8000 # 서비스 포트
+      targetPort: 8000 # 컨테이너 포트
+---
+# Loadbalancer
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fastapi-alb-ingress
+  annotations: # 주석: k8s가 알아보기위한 주석
+    # 기존 보안 그룹 ID를 직접 지정 (여러 개일 경우 쉼표로 구분)
+    alb.ingress.kubernetes.io/security-groups: sg-005d6cdbac684425d
+    # internet-facing: 외부 로드밸런서
+    # internal: 내부 로드밸런서
+    alb.ingress.kubernetes.io/scheme: internet-facing # ALB의 스킴을 인터넷으로 설정
+    # ip: IP 주소를 대상으로 하는 타겟 그룹 생성
+    # instance: EC2 인스턴스를 대상(NodePort)으로 하는 타겟 그룹 생성
+    alb.ingress.kubernetes.io/target-type: ip # ALB가 IP 주소를 대상으로 사용하도록 설정
+    # HTTP 및 HTTPS 리스너 설정
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS": 443}]' # 리스너의 포트번호
+    # ACM 인증서 ARN 입력
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:626635419731:certificate/d4066af1-385c-4880-a558-f34825c79d6d
+    # HTTP 접속 시 HTTPS로 자동 리다이렉트 (선택 사항이지만 권장)
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  ingressClassName: alb # ALB Ingress Controller가 이 Ingress 리소스를 처리하도록 지정
+  rules:
+    - http:
+        paths: # 복잡한 경로를 위쪽에 배치하여 우선순위 설정
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service # Ingress가 트래픽을 라우팅할 서비스 이름
+                port:
+                  number: 80
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fastapi-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fastapi-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu # 오토스케일링(Scaling)의 기준이 되는 자원을 CPU로 지정합니다.
+        target:
+          type: Utilization # 백분율(%)을 기준으로 삼겠다는 의미
+          averageUtilization: 50
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu # 오토스케일링(Scaling)의 기준이 되는 자원을 CPU로 지정합니다.
+        target:
+          type: Utilization # 백분율(%)을 기준으로 삼겠다는 의미
+          averageUtilization: 50

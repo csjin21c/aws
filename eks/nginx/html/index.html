@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS ECR Test - NGINX Success!</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --aws-squid-ink: #232f3e;
+            --aws-smile-orange: #ff9900;
+            --docker-blue: #0db7ed;
+            --nginx-green: #009639;
+            --text-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--aws-squid-ink);
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        /* 심플한 SVG 로고 생성기 */
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logo-aws { background-color: var(--aws-squid-ink); border-bottom: 4px solid var(--aws-smile-orange); }
+        .logo-docker { background-color: var(--docker-blue); }
+        .logo-nginx { background-color: var(--nginx-green); }
+
+        h1 {
+            color: var(--aws-squid-ink);
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        .status-badge {
+            background-color: var(--nginx-green);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p.description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        .steps-container {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid var(--aws-smile-orange);
+        }
+
+        .steps-title {
+            font-weight: bold;
+            color: var(--aws-squid-ink);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .steps-list {
+            margin: 0;
+            padding-left: 1.2rem;
+            color: #444;
+        }
+
+        .steps-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo logo-aws">AWS</div>
+            <div class="logo logo-docker">Docker</div>
+            <div class="logo logo-nginx">NGINX</div>
+        </div>
+
+        <div class="status-badge">Container Running</div>
+        
+        <h1>ECR Deploy Success!</h1>
+        
+        <p class="description">
+            축하합니다! WSL2 환경에서 Docker 이미지를 빌드하고,<br>
+            AWS Elastic Container Registry (ECR)에 푸시한 후<br>
+            NGINX 컨테이너를 성공적으로 실행했습니다.
+        </p>
+
+        <div class="steps-container">
+            <div class="steps-title">완료된 파이프라인</div>
+            <ul class="steps-list">
+                <li>WSL2 Ubuntu 환경 구축 (code .)</li>
+                <li>NGINX 사용자 정의 이미지 빌드 (docker build)</li>
+                <li>AWS CLI 인증 (aws ecr get-login-password)</li>
+                <li>ECR 리포지토리 푸시 (docker push)</li>
+                <li>컨테이너 실행 및 서비스 확인 (docker run)</li>
+            </ul>
+        </div>
+
+        <footer>
+            AWS ECR Hands-on Lab | Generated at: <span id="time"></span>
+        </footer>
+    </div>
+
+    <script>
+        // 현재 시간을 표시하는 간단한 스크립트
+        const now = new Date();
+        document.getElementById('time').innerText = now.toLocaleString('ko-KR');
+    </script>
+</body>
+</html>

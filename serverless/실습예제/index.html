@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDS 실습예제</title>
+    <link href="default.css"  rel="stylesheet" />
+    <script src=https://code.jquery.com/jquery-3.6.1.js></script>
+    <script src="default.js"></script>
+</head>
+<body>
+    <div id="container">
+        <h1>서버리스 데이터베이스 프로그래밍</h1>
+        <div id="loginBox">
+            <form id="appendForm">
+                <div>
+                    <ul class="row cl">
+                        <li class="fl uline"><label>아이디</label><input type="hidden" name="idx" id="idx" value="" /></li>
+                        <li class="uline"><select name="uid" id="uid">
+                            <option value="">==== 교육생 선택 ====</option></select>
+                            <input type="button" value="불러오기" id="btnReload" />
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <ul class="row cl">
+                        <li class="fl uline"><label>국어</label></li>
+                        <li class="uline"><input type="number" name="kor" id="kor" max="100" min="0" value="0" /></li>
+                    </ul>
+                </div>
+                <div>
+                    <ul class="row cl">
+                        <li class="fl uline"><label>영어</label></li>
+                        <li class="uline"><input type="number" name="eng" id="eng" max="100" min="0" value="0" /></li>
+                    </ul>
+                </div>
+                <div>
+                    <ul class="row cl">
+                        <li class="fl uline"><label>수학</label></li>
+                        <li class="uline"><input type="number" name="mat" id="mat" max="100" min="0" value="0" /></li>
+                    </ul>
+                </div>
+                <div>
+                    <input type="button" value="성적보기" id="btnLoding" /><input type="button" value="성적 등록" id="btnLogin" /><input type="button" value="성적 수정" id="btnChoEdit" /><input type="button" value="일괄삭제" id="btnChoDel" />
+                </div>
+            </form>
+            <form id="viewForm"></form>    
+                <div class="viewArea">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="allChecked" /></th>
+                                <th>아이디</th>
+                                <th>이름</th>
+                                <th>성별</th>
+                                <th>국어</th>
+                                <th>영어</th>
+                                <th>수학</th>
+                                <th>총점</th>
+                                <th>평균</th>
+                                <th>평가일</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultArea">
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

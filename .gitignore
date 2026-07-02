@@ -1,0 +1,31 @@
+# === 1. 보안 및 환경 변수 (최우선 제외) ===
+.env                # API 키, DB 비밀번호 등 민감 정보
+*.pem               # AWS 접속용 키 페어
+*.key               # 암호화 키 파일
+
+# === 2. Python 가상 환경 및 패키지 ===
+venv/               # 가상 환경 폴더 (주로 사용하는 이름)
+.venv/              # 표준 가상 환경 폴더
+env/
+bin/
+lib/
+include/
+
+# === 3. Python 캐시 및 컴파일 파일 ===
+__pycache__/        # 런타임 시 생성되는 바이트코드 캐시
+*.py[cod]           # .pyc, .pyo, .pyd 파일
+*$py.class
+
+# === 4. 운영체제 및 도구 설정 ===
+.DS_Store           # macOS 전용 시스템 파일
+Thumbs.db           # Windows 전용 썸네일 파일
+.vscode/            # VS Code 개인 설정 (팀별로 다를 수 있음)
+.idea/              # PyCharm 설정 파일
+
+# === 5. 빌드 및 배포 결과물 ===
+build/
+dist/
+*.egg-info/
+
+# === 기타 ===
+강의자료.ini       # 강의 자료 파일 (개인적으로 관리)

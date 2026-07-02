@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>AWS FastAPI Template</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f7f6;
+        font-family: "Arial", sans-serif;
+      }
+      .card {
+        text-align: center;
+        padding: 50px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-top: 5px solid #05998b;
+      }
+      .logo {
+        width: 120px;
+        margin-bottom: 25px;
+      }
+      h1 {
+        color: #333;
+        font-size: 1.4rem;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img
+        src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+        alt="FastAPI"
+        class="logo"
+      />
+      <h1>{{ message }}</h1>
+    </div>
+  </body>
+</html>

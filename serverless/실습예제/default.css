@@ -1,0 +1,53 @@
+ul, ol, dl, li, dt, dd {list-style: none;padding:0;margin:0}
+a:hover {color:#ff4500;}
+html * {color:#efefef; font-size: 0.8rem;}
+table {
+    width:100%; 	border-collapse: collapse; 	border-spacing: 0;
+}
+th {border-bottom: 1px dashed #666;}
+td {text-align: center;}
+#container {
+    width:80%;max-width:1200px; min-width: 600px;padding:20px;margin:auto;
+}
+h1, #container>div {
+    background-color:#202020;border:1px solid rgb(74, 121, 248);
+    border-radius: 10px;   
+}
+#loginBox {padding:30px;margin-top:0}
+h1 {margin-top:50px;margin-bottom:10px;padding:10px;font-size: 1.2rem;text-align:center;}
+form>div {margin-bottom:10px;}
+form>div:last-child {text-align: center;margin-top:30px;}
+.uline {border-bottom:1px solid #666;}
+
+input {background:none;border:none;}
+input[type=text], input[type=password] {width:80%;}
+input[type=number]:hover, input[type=button]:hover {background-color:rgba(255,255,255,0.1);}
+input[type=button] {
+    display:inline-block; width:20%; height:30px;
+    border:1px solid #666; border-radius: 15px;
+    margin : 0 5px;
+}
+select {background: none; }
+option {color:#000;}
+
+
+.row li {padding:5px;}
+.row>li:first-child {width:100px; text-align:center;}
+.row>li:last-child {margin-left:120px;}
+
+.fl {float:left}
+.fr {float:right}
+
+.cl {clear: left;}
+.cr {clear: right;}
+.cb {clear: both; }
+
+.clb {font-size:1rem; color:rgb(52, 96, 240)}
+
+.mp {cursor: pointer;}
+
+#btnReload {display:inline; width: 80px; height:auto;border-radius: 10px}
+.viewArea {overflow-y: scroll; height:200px;background-color: white; }
+.viewArea * {color:black;}
+
+#resultArea tr:hover {background-color:rgb(243, 227, 186);cursor: pointer;}
