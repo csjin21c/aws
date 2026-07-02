@@ -24,7 +24,7 @@ $PKG_MANAGER install -y nginx
 
 # index.html 다운로드
 # (참고: 기존 로직에 따라 대상 디렉토리 지정)
-curl -o $WEB_ROOT/index.html https://raw.githubusercontent.com/csjin21c/aws/main/alb/index.html
+curl -o $WEB_ROOT/index.html https://raw.githubusercontent.com/csjin21c/aws/refs/heads/main/ALB/index.html
 
 # 호스트 이름을 가져와서 파일 내 변수 치환
 sed -i "s/{{HOSTNAME}}/$(hostname)/g" $WEB_ROOT/index.html
