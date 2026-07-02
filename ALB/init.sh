@@ -34,7 +34,13 @@ cat <<EOF > /etc/nginx/conf.d/charset.conf
 charset utf-8;
 EOF
 
+# Nginx 설치 부분 수정
+echo "Installing Nginx..."
+$PKG_MANAGER install -y nginx
+
+# 서비스 시작 전 설정이 올바른지 확인 (테스트)
+nginx -t
+
 # Nginx 서비스 시작 및 활성화
 systemctl enable nginx
 systemctl start nginx
-systemctl restart nginx
